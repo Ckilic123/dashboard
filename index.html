@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Dashboard</title>
+</head>
+<body>
+  <h1>AI Dashboard</h1>
+  <div id="weather">Loading weather...</div>
+  <div id="stocks">Loading stocks...</div>
+  <div id="news">Loading news...</div>
+  <div id="ai-chat">
+    <input id="ai-input" placeholder="Ask something..." />
+    <button onclick="sendToAI()">Send</button>
+    <div id="chat-log"></div>
+  </div>
+  <script>
+    async function getData(endpoint, target) {
+      document.getElementById(target).innerText = 'Loading...';
+      const res = await fetch('/api/' + endpoint);
+      const data = await res.json();
+      document.getElementById(target).innerText = JSON.stringify(data, null, 2);
+    }
+
+    async function sendToAI() {
+      const msg = document.getElementById('ai-input').value;
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      });
+      const data = await res.json();
+      document.getElementById('chat-log').innerText = data.reply;
+    }
+
+    getData('weather', 'weather');
+    getData('stocks', 'stocks');
+    getData('news', 'news');
+  </script>
+</body>
+</html>
